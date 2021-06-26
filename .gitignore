@@ -1,2 +1,3 @@
-**/target/*
-**/zk-single-kafka-multiple/*
+target
+zk-single-kafka-multiple
+.idea
