@@ -1,5 +1,5 @@
 0
-51
+52
 __consumer_offsets 22 0
 __consumer_offsets 30 0
 __consumer_offsets 8 0
@@ -20,6 +20,7 @@ __consumer_offsets 16 0
 __consumer_offsets 28 0
 __consumer_offsets 31 0
 __consumer_offsets 36 0
+order-confirmed-event 0 0
 __consumer_offsets 42 0
 __consumer_offsets 3 0
 __consumer_offsets 18 0

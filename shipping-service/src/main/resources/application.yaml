@@ -1,0 +1,18 @@
+server:
+  port: 8083
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+spring.cloud.stream:
+  kafka:
+    binder:
+      replication-factor: 1
+  function:
+    definition: shippingProcessor
+  bindings:
+    shippingProcessor-in-0:
+      destination: order-confirmed-event
+    shippingProcessor-out-0:
+      destination: shipping-event

@@ -35,11 +35,24 @@ public class OrderStatusUpdateEventHandler {
         if(Objects.isNull(purchaseOrder.getInventoryStatus()) || Objects.isNull(purchaseOrder.getPaymentStatus()))
             return;
         var isComplete = PaymentStatus.RESERVED.equals(purchaseOrder.getPaymentStatus()) && InventoryStatus.RESERVED.equals(purchaseOrder.getInventoryStatus());
-        var orderStatus = isComplete ? OrderStatus.ORDER_COMPLETED : OrderStatus.ORDER_CANCELLED;
+        var orderStatus = isComplete ? OrderStatus.CONFIRMED : OrderStatus.CANCELLED;
         purchaseOrder.setOrderStatus(orderStatus);
-        if (!isComplete){
+
+        if (isComplete){
+            this.publisher.raiseOrderConfirmedEvent(purchaseOrder, orderStatus);
+        } else {
             this.publisher.raiseOrderEvent(purchaseOrder, orderStatus);
         }
     }
 
+    @Transactional
+    public void updateOrderShipping(final UUID id, Consumer<PurchaseOrder> consumer){
+        this.repository
+                .findById(id)
+                .ifPresent(consumer.andThen(this::updateOrderShipping));
+
+    }
+
+    private void updateOrderShipping(PurchaseOrder purchaseOrder){
+    }
 }

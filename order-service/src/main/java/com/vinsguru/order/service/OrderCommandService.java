@@ -25,7 +25,7 @@ public class OrderCommandService {
     @Transactional
     public PurchaseOrder createOrder(OrderRequestDto orderRequestDTO){
         PurchaseOrder purchaseOrder = this.purchaseOrderRepository.save(this.dtoToEntity(orderRequestDTO));
-        this.publisher.raiseOrderEvent(purchaseOrder, OrderStatus.ORDER_CREATED);
+        this.publisher.raiseOrderEvent(purchaseOrder, OrderStatus.CREATED);
         return purchaseOrder;
     }
 
@@ -34,7 +34,7 @@ public class OrderCommandService {
         purchaseOrder.setId(dto.getOrderId());
         purchaseOrder.setProductId(dto.getProductId());
         purchaseOrder.setUserId(dto.getUserId());
-        purchaseOrder.setOrderStatus(OrderStatus.ORDER_CREATED);
+        purchaseOrder.setOrderStatus(OrderStatus.CREATED);
         purchaseOrder.setPrice(productPriceMap.get(purchaseOrder.getProductId()));
         return purchaseOrder;
     }

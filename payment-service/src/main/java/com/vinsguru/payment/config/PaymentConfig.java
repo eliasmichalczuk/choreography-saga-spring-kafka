@@ -24,7 +24,7 @@ public class PaymentConfig {
     }
 
     private Mono<PaymentEvent> processPayment(OrderEvent event){
-        if(event.getOrderStatus().equals(OrderStatus.ORDER_CREATED)){
+        if(event.getOrderStatus().equals(OrderStatus.CREATED)){
             return Mono.fromSupplier(() -> this.service.newOrderEvent(event));
         }else{
             return Mono.fromRunnable(() -> this.service.cancelOrderEvent(event));

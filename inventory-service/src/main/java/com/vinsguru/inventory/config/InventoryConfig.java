@@ -24,7 +24,7 @@ public class InventoryConfig {
     }
 
     private Mono<InventoryEvent> processInventory(OrderEvent event){
-        if(event.getOrderStatus().equals(OrderStatus.ORDER_CREATED)){
+        if(event.getOrderStatus().equals(OrderStatus.CREATED)){
             return Mono.fromSupplier(() -> this.service.newOrderInventory(event));
         }
         return Mono.fromRunnable(() -> this.service.cancelOrderInventory(event));

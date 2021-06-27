@@ -1,5 +1,6 @@
 package com.vinsguru.order.config;
 
+import com.vinsguru.events.order.OrderConfirmedEvent;
 import com.vinsguru.events.order.OrderEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,5 +21,16 @@ public class OrderConfig {
     public Supplier<Flux<OrderEvent>> orderSupplier(Sinks.Many<OrderEvent> sink){
         return sink::asFlux;
     }
+
+    @Bean
+    public Sinks.Many<OrderConfirmedEvent> orderConfirmedSink(){
+        return Sinks.many().unicast().onBackpressureBuffer();
+    }
+
+    @Bean
+    public Supplier<Flux<OrderConfirmedEvent>> orderConfirmedSupplier(Sinks.Many<OrderConfirmedEvent> sink){
+        return sink::asFlux;
+    }
+
 
 }

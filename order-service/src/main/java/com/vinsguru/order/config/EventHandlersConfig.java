@@ -2,6 +2,7 @@ package com.vinsguru.order.config;
 
 import com.vinsguru.events.inventory.InventoryEvent;
 import com.vinsguru.events.payment.PaymentEvent;
+import com.vinsguru.events.shipping.ShippingEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,4 +33,12 @@ public class EventHandlersConfig {
         };
     }
 
+    @Bean
+    public Consumer<ShippingEvent> shippingEventConsumer(){
+        return se -> {
+            orderEventHandler.updateOrderShipping(se.getOrderId(), po -> {
+                po.setOrderStatus(se.getOrderStatus());
+            });
+        };
+    }
 }
