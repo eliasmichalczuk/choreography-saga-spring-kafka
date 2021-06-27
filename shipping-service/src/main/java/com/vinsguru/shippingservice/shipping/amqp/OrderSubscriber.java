@@ -26,9 +26,9 @@ public class OrderSubscriber {
     }
 
     private Mono<ShippingEvent> processShipping(OrderConfirmedEvent event){
-        if(event.getOrderStatus().equals(OrderStatus.CONFIRMED)){
+        if (OrderStatus.CONFIRMED.equals(event.getOrderStatus())){
             return Mono.fromSupplier(() -> this.orderService.orderConfirmedEvent(event));
         }
-        return null;
+        return Mono.fromSupplier(() -> this.orderService.orderNotConfirmed(event));
     }
 }

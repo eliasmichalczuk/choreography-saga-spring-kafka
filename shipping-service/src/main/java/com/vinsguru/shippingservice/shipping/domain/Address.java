@@ -23,7 +23,7 @@ public class Address {
     private int number;
     private String city;
 
-    public boolean isCool() {
+    public boolean isValid() {
         return code != 0 && street != null && number != 0 && city != null;
     }
 }

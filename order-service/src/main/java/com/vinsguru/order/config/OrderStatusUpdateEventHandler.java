@@ -54,5 +54,9 @@ public class OrderStatusUpdateEventHandler {
     }
 
     private void updateOrderShipping(PurchaseOrder purchaseOrder){
+        if (OrderStatus.SHIPPING_ERROR.equals(purchaseOrder.getOrderStatus())) {
+            System.out.println("SHIPPING_ERROR purchase id: " + purchaseOrder.getId());
+            this.publisher.raiseOrderEvent(purchaseOrder, OrderStatus.CANCELLED);
+        }
     }
 }

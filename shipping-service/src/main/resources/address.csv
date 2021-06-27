@@ -1,4 +1,4 @@
 id,user_id,code,street,number,city
 1,1,12,A street,22, joiville
-2,2,3,B street,23, joiville
+2,2,0,B street,23, joiville
 3,3,99,C street,24, joiville
