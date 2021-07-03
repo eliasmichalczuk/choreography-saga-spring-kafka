@@ -11,7 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor(staticName = "of")
 public class InventoryDto {
 
-    private UUID orderId;
-    private Integer productId;
+    private PurchaseOrderDto purchaseOrder;
 
 }

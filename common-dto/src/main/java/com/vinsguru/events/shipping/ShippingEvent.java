@@ -4,6 +4,7 @@ import com.vinsguru.dto.PaymentDto;
 import com.vinsguru.events.Event;
 import com.vinsguru.events.order.OrderConfirmedEvent;
 import com.vinsguru.events.order.OrderStatus;
+import com.vinsguru.events.payment.PaymentEvent;
 import com.vinsguru.events.payment.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +25,8 @@ public class ShippingEvent implements Event {
     private OrderStatus orderStatus;
     private String message;
 
-    public static ShippingEvent shippingConfirmed(OrderConfirmedEvent orderEvent) {
-        return new ShippingEvent(orderEvent.getPurchaseOrder().getOrderId(), OrderStatus.SHIPPING_CONFIRMED, "confirmed");
+    public static ShippingEvent shippingConfirmed(PaymentEvent paymentEvent) {
+        return new ShippingEvent(paymentEvent.getPayment().getOrderId(), OrderStatus.SHIPPING_CONFIRMED, "confirmed");
     }
 
     public static ShippingEvent shippingError(OrderConfirmedEvent orderEvent) {

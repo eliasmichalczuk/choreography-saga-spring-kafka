@@ -5,18 +5,16 @@ spring.cloud.stream:
     binder:
       replication-factor: 1
   function:
-    definition: orderSupplier;orderConfirmedSupplier;paymentEventConsumer;inventoryEventConsumer;shippingEventConsumer
+    definition: orderSupplier;shippingEventConsumer;inventoryOutOfStockEventConsumer
   bindings:
     orderSupplier-out-0:
       destination: order-event
-    orderConfirmedSupplier-out-0:
-      destination: order-confirmed-event
-    paymentEventConsumer-in-0:
-      destination: payment-event
-    inventoryEventConsumer-in-0:
-      destination: inventory-event
+#    orderConfirmedSupplier-out-0:
+#      destination: order-confirmed-event
     shippingEventConsumer-in-0:
       destination: shipping-event
+    inventoryOutOfStockEventConsumer-in-0:
+      destination: inventory-out-of-stock-event
 
 #      producer:
 #        partition-key-expression: headers['partitionKey']

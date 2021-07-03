@@ -5,9 +5,13 @@ spring.cloud.stream:
     binder:
       replication-factor: 1
   function:
-    definition: paymentProcessor
+    definition: paymentProcessor;inventoryEventConsumer;paymentSupplier
   bindings:
     paymentProcessor-in-0:
       destination: order-event
     paymentProcessor-out-0:
+      destination: payment-event
+    inventoryEventConsumer-in-0:
+      destination: inventory-event
+    paymentSupplier-out-0:
       destination: payment-event

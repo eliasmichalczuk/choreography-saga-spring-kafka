@@ -1,6 +1,7 @@
 package com.vinsguru.payment.service;
 
 import com.vinsguru.dto.PaymentDto;
+import com.vinsguru.events.inventory.InventoryEvent;
 import com.vinsguru.events.order.OrderEvent;
 import com.vinsguru.events.payment.PaymentEvent;
 import com.vinsguru.events.payment.PaymentStatus;
@@ -20,18 +21,22 @@ public class PaymentService {
     @Autowired
     private UserTransactionRepository transactionRepository;
 
+    @Autowired
+    private PaymentPublisher paymentPublisher;
+
     @Transactional
-    public PaymentEvent newOrderEvent(OrderEvent orderEvent){
-        var purchaseOrder = orderEvent.getPurchaseOrder();
+    public void newOrderEvent(InventoryEvent inventoryEvent){
+        var purchaseOrder = inventoryEvent.getInventory().getPurchaseOrder();
         var dto = PaymentDto.of(purchaseOrder.getOrderId(), purchaseOrder.getUserId(), purchaseOrder.getPrice());
-        return this.balanceRepository.findById(purchaseOrder.getUserId())
+        this.balanceRepository.findById(purchaseOrder.getUserId())
                 .filter(ub -> ub.getBalance() >= purchaseOrder.getPrice())
-                .map(ub -> {
+                .ifPresentOrElse(ub -> {
                     ub.setBalance(ub.getBalance() - purchaseOrder.getPrice());
                     this.transactionRepository.save(UserTransaction.of(purchaseOrder.getOrderId(), purchaseOrder.getUserId(), purchaseOrder.getPrice()));
-                    return new PaymentEvent(dto, PaymentStatus.RESERVED);
-                })
-                .orElse(new PaymentEvent(dto, PaymentStatus.REJECTED));
+                    paymentPublisher.emit(new PaymentEvent(dto, PaymentStatus.RESERVED));
+                }, () -> {
+                    //new PaymentEvent(dto, PaymentStatus.REJECTED);
+                });
     }
 
     @Transactional

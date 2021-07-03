@@ -1,6 +1,8 @@
 package com.vinsguru.order.config;
 
 import com.vinsguru.events.inventory.InventoryEvent;
+import com.vinsguru.events.inventory.InventoryOutOfStockEvent;
+import com.vinsguru.events.order.OrderStatus;
 import com.vinsguru.events.payment.PaymentEvent;
 import com.vinsguru.events.shipping.ShippingEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,28 +18,19 @@ public class EventHandlersConfig {
     private OrderStatusUpdateEventHandler orderEventHandler;
 
     @Bean
-    public Consumer<PaymentEvent> paymentEventConsumer(){
-        return pe -> {
-            orderEventHandler.updateOrder(pe.getPayment().getOrderId(), po -> {
-                po.setPaymentStatus(pe.getPaymentStatus());
-            });
-        };
-    }
-
-    @Bean
-    public Consumer<InventoryEvent> inventoryEventConsumer(){
-        return ie -> {
-            orderEventHandler.updateOrder(ie.getInventory().getOrderId(), po -> {
-                po.setInventoryStatus(ie.getStatus());
-            });
-        };
-    }
-
-    @Bean
     public Consumer<ShippingEvent> shippingEventConsumer(){
         return se -> {
             orderEventHandler.updateOrderShipping(se.getOrderId(), po -> {
                 po.setOrderStatus(se.getOrderStatus());
+            });
+        };
+    }
+
+    @Bean
+    public Consumer<InventoryOutOfStockEvent> inventoryOutOfStockEventConsumer(){
+        return event -> {
+            orderEventHandler.updateOrder(event.getInventory().getPurchaseOrder().getOrderId(), po -> {
+                po.setOrderStatus(OrderStatus.CANCELLED);
             });
         };
     }

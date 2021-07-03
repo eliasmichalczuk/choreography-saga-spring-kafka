@@ -2,6 +2,7 @@ package com.vinsguru.inventory.service;
 
 import com.vinsguru.dto.InventoryDto;
 import com.vinsguru.events.inventory.InventoryEvent;
+import com.vinsguru.events.inventory.InventoryOutOfStockEvent;
 import com.vinsguru.events.inventory.InventoryStatus;
 import com.vinsguru.events.order.OrderEvent;
 import com.vinsguru.inventory.entity.OrderInventoryConsumption;
@@ -20,17 +21,21 @@ public class InventoryService {
     @Autowired
     private OrderInventoryConsumptionRepository consumptionRepository;
 
+    @Autowired
+    private InventoryPublisher inventoryPublisher;
+
     @Transactional
-    public InventoryEvent newOrderInventory(OrderEvent orderEvent){
-        InventoryDto dto = InventoryDto.of(orderEvent.getPurchaseOrder().getOrderId(), orderEvent.getPurchaseOrder().getProductId());
-        return inventoryRepository.findById(orderEvent.getPurchaseOrder().getProductId())
+    public void newOrderInventory(OrderEvent orderEvent){
+        InventoryDto dto = InventoryDto.of(orderEvent.getPurchaseOrder());
+        inventoryRepository.findById(orderEvent.getPurchaseOrder().getProductId())
                 .filter(i -> i.getAvailableInventory() > 0 )
-                .map(i -> {
+                .ifPresentOrElse(i -> {
                     i.setAvailableInventory(i.getAvailableInventory() - 1);
                     consumptionRepository.save(OrderInventoryConsumption.of(orderEvent.getPurchaseOrder().getOrderId(), orderEvent.getPurchaseOrder().getProductId(), 1));
-                    return new InventoryEvent(dto, InventoryStatus.RESERVED);
-                })
-                .orElse(new InventoryEvent(dto, InventoryStatus.REJECTED));
+                    inventoryPublisher.emit(new InventoryEvent(dto, InventoryStatus.RESERVED));
+                }, () -> {
+                    inventoryPublisher.emit(new InventoryOutOfStockEvent(dto, InventoryStatus.RESERVED));
+                });
     }
 
     @Transactional

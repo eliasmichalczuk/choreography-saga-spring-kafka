@@ -5,9 +5,11 @@ spring.cloud.stream:
     binder:
       replication-factor: 1
   function:
-    definition: inventoryProcessor
+    definition: inventoryConsumer;inventorySupplier;inventoryOutOfStockSupplier
   bindings:
-    inventoryProcessor-in-0:
+    inventoryConsumer-in-0:
       destination: order-event
-    inventoryProcessor-out-0:
+    inventorySupplier-out-0:
       destination: inventory-event
+    inventoryOutOfStockSupplier-out-0:
+      destination: inventory-out-of-stock-event
